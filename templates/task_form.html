@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAGE TITLE - Task Board</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    {% include "header.html" %}
+    <div class="container">
+
+        <!-- Title: "New task" or "Edit task" -->
+        <div class="form-title">
+            <h1>New task</h1>
+            <p>Fill in the details of the task</p>
+        </div>
+
+        <!-- Form -->
+        <div class="form-card">
+            <form method="post">
+                {{ form.hidden_tag() }}
+
+                <label for="title">Title</label>
+                {{ form.title(placeholder="e.g. Add task here") }}
+                <label for="description">Description</label>
+                {{ form.description(rows=4, placeholder="Optional details") }}
+                <div class="form-row">
+                    <div>
+                        <label for="priority">Priority</label>
+                        {{ form.priority() }}
+                    </div>
+
+                    <div>
+                        <label for="due_date">Due date</label>
+                        {{ form.due_date() }}
+                    </div>
+                </div>
+
+                <!-- Button text: "Add task" or "Save changes" -->
+                {{ form.submit(class="btn") }}
+            </form>
+        </div>
+
+        <a class="back-link" href="{{ url_for('board') }}">← Back to the board</a>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>☑️ Task Board - Built with Python & Flask</p>
+    </footer>
+
+</body>
+
+</html>

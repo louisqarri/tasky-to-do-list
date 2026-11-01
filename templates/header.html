@@ -1,0 +1,25 @@
+<!-- Navbar -->
+<nav class="navbar">
+    {% if current_user.is_authenticated %}
+    <a class="brand" href="{{ url_for('board') }}">☑️ TASKY Board</a>
+
+    {% else %}
+    <a class="brand" href="{{ url_for('home') }}">☑️ TASKY Board</a>
+    {% endif %}
+
+
+    <div class="nav-right">
+        {% if current_user.is_authenticated %}
+        <a class="nav-btn" href="{{ url_for('board') }}">Board</a>
+        <a class="nav-btn primary" href="{{ url_for('task_form') }}">+ New task</a>
+        <a class="nav-btn logout" href="{{ url_for('logout') }}">Log out</a>
+        <span class="nav-btn user">👤 {{current_user.name}}</span>
+        {% if current_user.is_manager == True %}
+        <a class="nav-btn manager" href="{{ url_for('manager') }}">Team Pulse</a>
+{% endif %}
+        {% else %}
+        <a class="nav-btn" href="{{ url_for('login') }}">Log in</a>
+        <a class="nav-btn" href="{{ url_for('register') }}">Sign up</a>
+        {% endif %}
+    </div>
+</nav>

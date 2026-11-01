@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TASKY - Manager</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <div class="container">
+
+        <!-- Title + export -->
+        <div class="dash-header">
+            <div>
+                <p class="eyebrow">Manager</p>
+                <h1>Team overview</h1>
+            </div>
+            <a class="btn dash-export" href="{{ url_for('export') }}">⬇ Download report</a>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-label">Users</span>
+                <span class="stat-value">{{ users | rejectattr("is_manager") | list | length }}</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Total tasks</span>
+                <span class="stat-value">{{ stats.total }}</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Done</span>
+                <span class="stat-value">{{ stats.completion }}%</span>
+            </div>
+            <div class="stat stat-danger">
+                <span class="stat-label">Overdue</span>
+                <span class="stat-value">{{ stats.overdue }}</span>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts">
+            <div class="panel chart-panel">
+                <h2 class="panel-title">Tasks by status</h2>
+                <div class="chart-box">
+                    {{ chart_status | safe }}
+                </div>
+            </div>
+            <div class="panel chart-panel">
+                <h2 class="panel-title">Progress per user</h2>
+                <div class="chart-box">
+                    {{ chart_users | safe }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Team table -->
+        <div class="panel">
+            <h2 class="panel-title">Team</h2>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>To Do</th>
+                            <th>In Progress</th>
+                            <th>Done</th>
+                            <th>Progress</th>
+                            <th>Overdue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- ONE ROW (repeat for every user) -->
+                        {% for member in team %}
+                        <tr>
+                            <td>
+                                <div class="user-name">{{ member.user.name }}</div>
+                                <div class="user-email">{{ member.user.email }}</div>
+                            </td>
+                            <td>{{ member.stats.status_todo }}</td>
+                            <td>{{ member.stats.status_progress }}</td>
+                            <td>{{ member.stats.status_done }}</td>
+                            <td>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: {{ member.stats.completion }}%"></div>
+                                </div>
+                                <span class="progress-text">{{ member.stats.completion }}%</span>
+                            </td>
+                            <td><span class="overdue-badge {{ 'zero' if member.stats.overdue == 0 }}">{{
+                                    member.stats.overdue }}</span></td>
+                        </tr>
+                        {% endfor %}
+                        <!-- END OF ONE ROW -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- All tasks table -->
+        <div class="panel">
+            <h2 class="panel-title">All tasks</h2>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>User</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Due date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- ONE ROW (repeat for every task) -->
+                        <!-- add the class "row-overdue" to the <tr> when the due date has passed -->
+                        {% for task in tasks %}
+                        <tr
+                            class="{{ 'row-overdue' if task.due_date and task.due_date < today and task.status != 'done' }}">
+                            <td>{{ task.title }}</td>
+                            <td>{{ task.user.name }}</td>
+                            <td><span class="priority {{ task.priority }}">{{ task.priority }}</span></td>
+                            <td><span class="status {{ task.status }}">{{ task.status }}</span></td>
+                            <td class="mono">{{ task.due_date }}</td>
+                        </tr>
+                        {% endfor %}
+                        <!-- END OF ONE ROW -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>⚡ TASKY - Built with Python & Flask</p>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+# virtual environment
+.venv/
+
+# secrets
+.env
+
+# database
+*.db
+instance/
+
+# python cache
+__pycache__/
+*.pyc
+
+# generated files
+*.xlsx
+screenshots.zip
+
+# mac
+.DS_Store

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Board</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    {% include "header.html" %}
+    <div class="container">
+
+        <!-- Board: 3 columns -->
+        <div class="board">
+
+            <!-- COLUMN 1: TO DO -->
+            <div class="column">
+                <div class="column-header">
+                    <h2>To Do</h2>
+                    {% set todo_count = tasks | selectattr("status", "equalto", "todo") | list | length %}
+                    <span class="count">{{ todo_count }} TASK{{ "S" if todo_count != 1 else "" }}</span>
+                </div>
+
+                <!-- ONE CARD (repeat for every task in this column) -->
+                <!-- add the class "overdue" when the due date has passed -->
+
+
+                {% for task in tasks %}
+                {% if task.status == "todo" %}
+                <div class="task {{ 'overdue' if task.due_date and task.due_date < today }}">
+                    <div class="task-top">
+
+                        <span class="priority {{ task.priority }}">{{ task.priority }}</span>
+                        <span class="due">📅 {{ task.due_date }}</span>
+                    </div>
+                    <h3>{{ task.title }}</h3>
+                    <span class="task-user">👤 {{ task.user.name }}</span>
+                    <p>{{ task.description }}</p>
+
+                    <div class="task-actions">
+                        <!-- no ← in the first column -->
+                        <form action="{{ url_for('move', task_id=task.id, direction='right') }}" method="post">
+                            <button type="submit" class="move" title="Move right">→</button>
+                        </form>
+                        <a class="edit" href="{{ url_for('edit', task_id=task.id) }}">Edit</a>
+                        <form action="{{ url_for('delete', task_id=task.id) }}" method="post">
+                            <button type="submit" class="delete">Delete</button>
+                        </form>
+
+                    </div>
+
+                </div>
+                {% endif %}
+                {% endfor %}
+                <!-- END OF ONE CARD -->
+
+            </div>
+
+            <!-- COLUMN 2: IN PROGRESS -->
+            <div class="column">
+                <div class="column-header">
+                    <h2>In Progress</h2>
+                    {% set inprogress_count = tasks | selectattr("status", "equalto", "inprogress") | list | length %}
+                    <span class="count">{{ inprogress_count }} TASK{{ "S" if inprogress_count != 1 else "" }}</span>
+                </div>
+
+                <!-- ONE CARD -->
+                {% for task in tasks %}
+                {% if task.status == "inprogress" %}
+                <div class="task {{ 'overdue' if task.due_date and task.due_date < today }}">
+                    <div class="task-top">
+                        <span class="priority {{ task.priority }}">{{ task.priority }}</span>
+                        <span class="due">📅 {{ task.due_date }}</span>
+                    </div>
+                    <h3>{{ task.title }}</h3>
+                    <span class="task-user">👤 {{ task.user.name }}</span>
+                    <p>{{ task.description }}</p>
+
+                    <div class="task-actions">
+                        <form action="{{ url_for('move', task_id=task.id, direction='left') }}" method="post">
+                            <button type="submit" class="move" title="Move left">←</button>
+                        </form>
+                        <form action="{{ url_for('move', task_id=task.id, direction='right') }}" method="post"> <button
+                                type="submit" class="move" title="Move right">→</button>
+                        </form>
+                        <a class="edit" href="{{ url_for('edit', task_id=task.id) }}">Edit</a>
+                        <form action="{{ url_for('delete', task_id=task.id) }}" method="post">
+                            <button type="submit" class="delete">Delete</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- END OF ONE CARD -->
+                {% endif %}
+                {% endfor %}
+            </div>
+
+
+            <!-- COLUMN 3: DONE -->
+            <div class="column">
+                <div class="column-header">
+                    <h2>Done</h2>
+                    {% set done_count = tasks | selectattr("status", "equalto", "done") | list | length %}
+                    <span class="count">{{ done_count }} TASK{{ "S" if done_count != 1 else "" }}</span>
+                </div>
+
+                <!-- ONE CARD (class "done" makes it look finished) -->
+                {% for task in tasks%}
+                {% if task.status == "done" %}
+                <div class="task done">
+                    <div class="task-top">
+                        <span class="priority {{ task.priority }}">{{ task.priority }}</span>
+                        <span class="due">📅 {{ task.due_date }}</span>
+                    </div>
+                    <h3>{{ task.title }}</h3>
+                    <span class="task-user">👤 {{ task.user.name }}</span>
+                    <p>{{ task.description }}</p>
+
+                    <div class="task-actions">
+                        <form action="{{ url_for('move', task_id=task.id, direction='left') }}" method="post"> <button
+                                type="submit" class="move" title="Move left">←</button>
+                        </form>
+                        <!-- no → in the last column -->
+                        <a class="edit" href="{{ url_for('edit', task_id=task.id) }}">Edit</a>
+                        <form action="{{ url_for('delete', task_id=task.id) }}" method="post">
+                            <button type="submit" class="delete">Delete</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- END OF ONE CARD -->
+                {% endif %}
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>☑️ Task Board - Built with Python & Flask</p>
+    </footer>
+
+</body>
+
+</html>

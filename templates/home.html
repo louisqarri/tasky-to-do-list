@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TASKY - Your tasks, organised</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+{% include "header.html" %}
+    <div class="container landing">
+
+        <!-- Hero -->
+        <section class="landing-hero">
+            <p class="eyebrow">Simple task management</p>
+            <h1>Your tasks.<br><span class="gradient-text">Organised.</span></h1>
+            <p class="lead">TASKY is a minimal Kanban board. Plan your work, track what's in progress, and see what's done, all in one place.</p>
+            <div class="landing-buttons">
+                <a class="btn" href="{{ url_for('register') }}">Get started, it's free</a>
+                <a class="btn-outline" href="{{ url_for('login') }}">I have an account</a>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features">
+            <div class="feature">
+                <span class="feature-icon">🗂️</span>
+                <h3>Three clear columns</h3>
+                <p>To Do, In Progress and Done. Move tasks with one click.</p>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🔥</span>
+                <h3>Priorities and deadlines</h3>
+                <p>Mark what matters and see overdue tasks at a glance.</p>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🔒</span>
+                <h3>Your own board</h3>
+                <p>Sign up and only you see your tasks.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>⚡ TASKY - Built with Python & Flask</p>
+    </footer>
+
+</body>
+
+</html>
