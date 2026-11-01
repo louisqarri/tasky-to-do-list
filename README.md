@@ -107,4 +107,4 @@ tasky-to-do-list/
 
 ## 👤 Author
 
-Built by **Louis Qarri** as a personal project after finishing *100 Days of Code: The Complete Python Pro Bootcamp*.
+Built by **Louis Qarri** as a personal project.
