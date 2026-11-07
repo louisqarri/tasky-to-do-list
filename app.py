@@ -1,5 +1,5 @@
 from datetime import date
-from flask import Flask, render_template, redirect, url_for, flash, request, abort, send_file
+from flask import Flask, render_template, redirect, url_for, flash, request, abort, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, Date, ForeignKey, Boolean
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -14,6 +14,10 @@ from charts import status_chart, user_chart
 import pandas as pd
 import os
 from dotenv import load_dotenv
+from io import BytesIO
+
+load_dotenv()
+API_KEY = os.environ.get("API_KEY")
 
 load_dotenv()
 app = Flask(__name__)
@@ -45,6 +49,17 @@ class Tasks(db.Model):
     due_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
     user: Mapped["Users"] = relationship("Users", back_populates="tasks")
+
+    def to_dict(self):
+        dictionary = {}
+        for colunm in self.__table__.columns:
+            value = getattr(self, colunm.name)
+
+            if isinstance(value, date):
+                value = value.isoformat()
+
+            dictionary[colunm.name] = value
+        return dictionary
 
 class TaskForm(FlaskForm):
     title = StringField("Task Title", validators=[DataRequired()])
@@ -248,7 +263,36 @@ def export():
             "Due Date": task.due_date
         })
     df = pd.DataFrame(rows)
-    return send_file("team_pulse.xlsx", as_attachment=True)
+    buffer = BytesIO()
+    df.to_excel(buffer, index=False)
+    buffer.seek(0)
+    return send_file(buffer, download_name="team_pulse.xlsx", as_attachment=True)
+
+@app.route("/api/tasks")
+def api_tasks():
+    api_key = request.headers.get("x-api-key")
+    if not API_KEY or api_key != API_KEY:
+            return jsonify(error="Not authorized"), 401
+    
+    status = request.args.get("status")
+    user_id = request.args.get("user_id", type=int)
+    priority = request.args.get("priority")
+
+    query = db.select(Tasks)
+    
+    if status:
+        query = query.where(Tasks.status == status)
+    if user_id:
+        query = query.where(Tasks.user_id == user_id)
+    if priority:
+        query = query.where(Tasks.priority == priority)
+
+    tasks = db.session.execute(query).scalars().all()
+
+    if not tasks:
+        return jsonify(error="No tasks found"), 404
+
+    return jsonify([task.to_dict() for task in tasks])
 
 if __name__ == '__main__':
     app.run(debug=True)
