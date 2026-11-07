@@ -105,6 +105,25 @@ tasky-to-do-list/
 └── screenshots/      # images for this README
 ```
 
+## 🔌 API
+
+`GET /api/tasks` returns tasks as JSON.
+
+Send your key in the header: `x-api-key: <API_KEY from .env>`
+
+Optional filters: `status`, `priority`, `user_id`
+
+```
+/api/tasks?status=todo&priority=high
+/api/tasks?user_id=2
+```
+
+| Response | Meaning |
+|---|---|
+| 200 | List of tasks |
+| 401 | Missing or wrong API key |
+| 404 | No tasks match the filters |
+
 ## 👤 Author
 
 Built by **Louis Qarri** as a personal project.
