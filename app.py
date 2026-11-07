@@ -272,7 +272,7 @@ def export():
 def api_tasks():
     api_key = request.headers.get("x-api-key")
     if not API_KEY or api_key != API_KEY:
-            return jsonify(error="Not authorized"), 401
+        return jsonify(error="Not authorized"), 401
     
     status = request.args.get("status")
     user_id = request.args.get("user_id", type=int)
