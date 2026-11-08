@@ -1,5 +1,5 @@
 """
-Fill the TASKY database with demo data (for screenshots).
+Fill the TASKY database with demo data.
 ⚠️ Deletes ALL existing users and tasks first!
 
 Run from the project folder:  python3 seed.py
